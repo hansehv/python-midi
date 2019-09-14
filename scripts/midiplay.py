@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
 Attach to a MIDI device and send the contents of a MIDI file to it.
 2019 - HansEhv: adapted to work with modified sequencer.py
