@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 """
 Attach to a MIDI device and send the contents of a MIDI file to it.
-2019 - HansEhv: adapted to work with modified sequencer.py
 """
+from __future__ import print_function
+
 import sys
 import time
 import midi
 import midi.sequencer as sequencer
 
 if len(sys.argv) != 4:
-    print "Usage: {0} <client> <port> <file>".format(sys.argv[0])
+    print("Usage: {0} <client> <port> <file>".format(sys.argv[0]))
     exit(2)
 
 client   = sys.argv[1]
@@ -24,11 +25,10 @@ if not client.isdigit:
     client = hardware.get_client(client)
 
 if not port.isdigit:
-    port = hardware.get_port(port)
+    port = hardware.get_port(port)    
 
-seq = sequencer.SequencerWrite()
+seq = sequencer.SequencerWrite(sequencer_resolution=pattern.resolution)
 seq.subscribe_port(client, port)
-seq.init_tempo(pattern.resolution)
 
 pattern.make_ticks_abs()
 events = []
@@ -47,4 +47,4 @@ while event.tick > seq.queue_get_tick_time():
     seq.drain()
     time.sleep(.5)
 
-print 'The end?'
+print('The end?')
