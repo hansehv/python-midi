@@ -1,3 +1,6 @@
+# HansEhv 2019: split up sequencer init routine to support samplerbox smfplayer
+#               this makes this build incompatible with original usage,
+#               an additional "init_tempo(self, resolution)" can solve that.
 from __future__ import print_function
 import select
 import midi
@@ -128,6 +131,13 @@ class Sequencer(object):
         err = S.snd_seq_alloc_named_queue(self.client, self.alsa_queue_name)
         if err < 0: self._error(err)
         self.queue = err
+        #
+        #   Samplerbox will play midi files with varying resolution
+        #   So we need to separate the tempo  initialization from
+        #   the subscription and class init.
+        #
+    def init_tempo(self, resolution):
+        self.sequencer_resolution=resolution
         adjtempo = int(60.0 * 1000000.0 / self.sequencer_tempo)
         S.init_queue_tempo(self.client, self.queue, 
                             adjtempo, self.sequencer_resolution)
@@ -266,7 +276,7 @@ class Sequencer(object):
             seqev.data.control.value = event.pitch
         ## Unknown
         else:
-            print("Warning :: Unknown event type: %s" % event)
+            #print("Warning :: Unknown event type: %s" % event)
             return None
             
         err = S.snd_seq_event_output(self.client, seqev)
